@@ -1,26 +1,12 @@
 package com.countries.cities.service.impl;
 
-import static com.countries.cities.util.PredefinedEntities.CITY;
-import static com.countries.cities.util.PredefinedEntities.CITY_DTO;
-import static com.countries.cities.util.PredefinedEntities.CITY_REQUEST_DTO;
-import static com.countries.cities.util.PredefinedEntities.CITY_SEARCH_PARAMETERS;
-import static com.countries.cities.util.PredefinedEntities.COUNTRY;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import com.countries.cities.exception.EntityNotFoundException;
 import com.countries.cities.mapper.CityMapper;
 import com.countries.cities.model.City;
 import com.countries.cities.repository.city.CityRepository;
 import com.countries.cities.repository.city.CitySpecificationBuilder;
 import com.countries.cities.repository.country.CountryRepository;
 import com.countries.cities.s3.StorageClient;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +18,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Collections;
+import java.util.List;
+
+import static com.countries.cities.util.PredefinedEntities.CITY;
+import static com.countries.cities.util.PredefinedEntities.CITY_DTO;
+import static com.countries.cities.util.PredefinedEntities.CITY_REQUEST_DTO;
+import static com.countries.cities.util.PredefinedEntities.CITY_SEARCH_PARAMETERS;
+import static com.countries.cities.util.PredefinedEntities.COUNTRY;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CityServiceImplTest {
@@ -58,7 +58,7 @@ class CityServiceImplTest {
     private CityServiceImpl cityService;
 
     @Test
-    void search() {
+    void whenSearchCalled_thenCitiesAreReturned() {
         Pageable pageable = PageRequest.of(0, 10);
         List<City> cities = Collections.singletonList(CITY);
 
@@ -74,7 +74,7 @@ class CityServiceImplTest {
     }
 
     @Test
-    void createCity_Success() {
+    void whenCreateCityCalled_thenCityIsCreatedSuccessfully() {
         when(countryRepository.findById(any())).thenReturn(java.util.Optional.of(COUNTRY));
         when(cityMapper.toEntity(any(), any())).thenReturn(CITY);
         when(cityRepository.save(any())).thenReturn(CITY);
@@ -91,19 +91,19 @@ class CityServiceImplTest {
     }
 
     @Test
-    void createCity_CountryNotFound() {
+    void whenCreateCityCalledWithNonExistingCountry_thenEntityNotFoundExceptionIsThrown() {
         MultipartFile logo = new MockMultipartFile("logo", new byte[0]);
 
         when(countryRepository.findById(any())).thenReturn(java.util.Optional.empty());
 
-        assertThrows(EntityNotFoundException.class,
-                () -> cityService.createCity(CITY_REQUEST_DTO, logo));
+        assertThrows(
+            EntityNotFoundException.class, () -> cityService.createCity(CITY_REQUEST_DTO, logo));
 
         verify(countryRepository, times(1)).findById(any());
     }
 
     @Test
-    void updateCity_Success() {
+    void whenUpdateCityCalled_thenCityIsUpdatedSuccessfully() {
         when(cityRepository.findById(CITY.getId())).thenReturn(java.util.Optional.of(CITY));
         when(cityRepository.save(any())).thenReturn(CITY);
         when(cityMapper.toDto(any())).thenReturn(CITY_DTO);
@@ -118,20 +118,21 @@ class CityServiceImplTest {
     }
 
     @Test
-    void updateCity_CityNotFound() {
+    void whenUpdateCityCalledWithNonExistingCity_thenEntityNotFoundExceptionIsThrown() {
         Long cityId = 2L;
         MultipartFile logo = new MockMultipartFile("logo", new byte[0]);
 
         when(cityRepository.findById(cityId)).thenReturn(java.util.Optional.empty());
 
-        assertThrows(EntityNotFoundException.class,
-                () -> cityService.updateCity(CITY_REQUEST_DTO, cityId, logo));
+        assertThrows(
+            EntityNotFoundException.class,
+            () -> cityService.updateCity(CITY_REQUEST_DTO, cityId, logo));
 
         verify(cityRepository, times(1)).findById(cityId);
     }
 
     @Test
-    void getAllUniqueCitiesNames_Success() {
+    void whenGetAllUniqueCitiesNamesCalled_thenCitiesNamesAreReturned() {
         when(cityRepository.findAll()).thenReturn(Collections.singletonList(CITY));
 
         cityService.getAllUniqueCitiesNames();
@@ -140,9 +141,8 @@ class CityServiceImplTest {
     }
 
     @Test
-    void getAllUniqueCitiesNames_EmptyList() {
-
-        when(cityRepository.findAll()).thenReturn(Arrays.asList());
+    void whenGetAllUniqueCitiesNamesCalledWithEmptyList_thenEmptyListIsReturned() {
+        when(cityRepository.findAll()).thenReturn(List.of());
 
         cityService.getAllUniqueCitiesNames();
 

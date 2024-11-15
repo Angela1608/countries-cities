@@ -1,0 +1,30 @@
+server:
+  port: 8090
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/cities-search-api-realm
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/countries_cities?serverTimezone=UTC
+    username: myuser
+    password: mypassword
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+aws:
+  s3:
+    region: us-east-1
+    bucket: cities-and-countries
+    credentials:
+      access-key: AKIA5FTY7JEXBN4JKHQT
+      secret-key: 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
+    host: https://d1abjeze80xbu8.cloudfront.net/
+
+logging:
+  level:
+    org.springframework.security.oauth2: DEBUG
