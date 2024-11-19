@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/realm
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+
+aws:
+  s3:
+    region: us-east-1
+    bucket: cities-and-countries
+    credentials:
+      access-key: mockAccessKey
+      secret-key: mockSecretKey
+    host: http://localhost:9000

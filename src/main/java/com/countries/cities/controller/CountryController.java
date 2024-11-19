@@ -6,6 +6,7 @@ import com.countries.cities.dto.response.CountryDto;
 import com.countries.cities.service.CountryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,10 +23,10 @@ public class CountryController implements CountrySwaggerApi {
     private final CountryService countryService;
 
     @PostMapping
-    @PreAuthorize(value = "hasRole('ROLE_EDITOR')")
-    public CountryDto createCountry(
-            @Valid @RequestBody CountryRequestDto requestDto) {
-        return countryService.createCountry(requestDto);
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    public ResponseEntity<CountryDto> createCountry(
+        @Valid @RequestBody CountryRequestDto requestDto) {
+        return ResponseEntity.ok(countryService.createCountry(requestDto));
     }
 
 }

@@ -1,0 +1,34 @@
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/${REALM_NAME}
+    public-urls:
+      - /actuator/**
+      - /swagger-ui/**
+      - /v3/api-docs/**
+  datasource:
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:3306/countries_cities?serverTimezone=UTC
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+logging:
+  level:
+    org.springframework.security: INFO
+
+aws:
+  s3:
+    region: ${REGION}
+    bucket: ${AWS_S3_BUCKET}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    host: https://${CLOUDFRONT_HOST}

@@ -35,9 +35,9 @@ public class S3Config {
     @Bean
     public StorageClient localStorageClient() {
         S3Client s3Client = S3Client.builder()
-                .credentialsProvider(createStaticCredentialsProvider(accessKey, secretKey))
-                .region(Region.of(region))
-                .build();
+            .credentialsProvider(createStaticCredentialsProvider(accessKey, secretKey))
+            .region(Region.of(region))
+            .build();
         return new S3StorageClient(s3Client, bucket, host);
     }
 
